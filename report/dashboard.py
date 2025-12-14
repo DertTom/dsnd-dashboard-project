@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # Import QueryBase, Employee, Team from employee_events
 #### YOUR CODE HERE
 # from employee_events.query_base import QueryBase
-# from employee_events.employee import Employee
+from employee_events.employee import Employee
 # from employee_events.team import Team
 
 # import the load_model function from the utils.py file
@@ -31,20 +31,19 @@ from combined_components import FormGroup, CombinedComponent
 # called `ReportDropdown`
 #### YOUR CODE HERE
 class ReportDropdown(Dropdown): # ToDo: IMPLEMENT ME !!!
-    def __init__(self): 
-        # Do nothing
-        self.grrr = ""
     # Overwrite the build_component method
     # ensuring it has the same parameters
     # as the Report parent class's method
     #### YOUR CODE HERE
+    def build_component(self, entity_id, model):
         #  Set the `label` attribute so it is set
         #  to the `name` attribute for the model
         #### YOUR CODE HERE
-        
+        self.label = "name"
         # Return the output from the
         # parent class's build_component method
         #### YOUR CODE HERE
+        return super().build_component(self, entity_id, model)
     
     # Overwrite the `component_data` method
     # Ensure the method uses the same parameters

@@ -1,5 +1,6 @@
 # Import the QueryBase class
 # YOUR CODE HERE
+from employee_events.query_base import QueryBase
 
 # Import dependencies for sql execution
 #### YOUR CODE HERE
@@ -7,11 +8,13 @@
 # Create a subclass of QueryBase
 # called  `Team`
 #### YOUR CODE HERE
-
+class Team(QueryBase):
     # Set the class attribute `name`
     # to the string "team"
     #### YOUR CODE HERE
-
+    def __init__(self):
+        super().__init__()
+        self.name = "team"
 
     # Define a `names` method
     # that receives no arguments

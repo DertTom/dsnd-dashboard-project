@@ -1,18 +1,19 @@
 # Import the QueryBase class
-#### YOUR CODE HERE
+from employee_events.query_base import QueryBase
 
 # Import dependencies needed for sql execution
-# from the `sql_execution` module
-#### YOUR CODE HERE
+# from the `sql_execution` module#
+# from sql_execution import 
 
 # Define a subclass of QueryBase
 # called Employee
 #### YOUR CODE HERE
-
+class Employee(QueryBase):
     # Set the class attribute `name`
     # to the string "employee"
     #### YOUR CODE HERE
-
+    def __init__(self):
+        self.name = "employee"
 
     # Define a method called `names`
     # that receives no arguments
@@ -53,6 +54,7 @@
     # is returns containing the execution of
     # the sql query
     #### YOUR CODE HERE
+    
 def model_data(self, id):
 
     return f"""
