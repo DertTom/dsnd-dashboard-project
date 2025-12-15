@@ -29,20 +29,21 @@ class QueryBase(QueryMixin):
         # of id columns used for joining
         # order by the event_date column
         sql_query = f"""SELECT 
-                        SUM(positive_events) AS 'sum_pos_evt'
-                        SUM(negative_events) AS 'sum_neg_evt'
+                        SUM(positive_events) AS 'sum_pos_evt',
+                        SUM(negative_events) AS 'sum_neg_evt',
+                        event_date
                         FROM {self.name}
-                        WHERE {self.name}'_id' = {id}
+                        JOIN employee_events USING({self.name}_id)
+                        WHERE {self.name}.{self.name}_id = {id}
                         GROUP BY event_date
                         ORDER BY event_date
                         """
         return self.pandas_query(sql_query)
-    
 
     # Define a `notes` method that receives an id argument
     # This function should return a pandas dataframe
     # YOUR CODE HERE
-    def notes(self, id)->pd.DataFrame:  # ToDo: IMPLEMENT ME !!! 
+    def notes(self, id)->pd.DataFrame:  
         # QUERY 2
         # Write an SQL query that returns `note_date`, and `note`
         # from the `notes` table
@@ -50,7 +51,6 @@ class QueryBase(QueryMixin):
         # with f-string formatting
         # so the query returns the notes
         # for the table name in the `name` class attribute
-        # YOUR CODE HERE
         sql_query = f"""SELECT note_date, note
                         FROM 'notes'
                         WHERE {self.name}'_id' = {id}

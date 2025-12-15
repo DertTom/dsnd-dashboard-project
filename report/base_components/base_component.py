@@ -6,7 +6,6 @@ class BaseComponent:
     def outer_div(self, component):
         return component
     
-
     def component_data(self, entity_id, model):
         raise NotImplemented
 

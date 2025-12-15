@@ -16,10 +16,10 @@ class QueryMixin:
     # that receives an sql query as a string
     # and returns the query's result
     # as a pandas dataframe
-    def pandas_query(sql_query):
+    def pandas_query(self, sql_query):
         with connect(db_path) as conn:
             df = pd.read_sql_query(sql_query, conn)
-            conn.close()
+        conn.close()
         return df
 
     # Define a method named `query`
@@ -27,10 +27,10 @@ class QueryMixin:
     # and returns the query's result as
     # a list of tuples. (You will need
     # to use an sqlite3 cursor)
-    def query(sql_query: str):
+    def query(self, sql_query: str):
         conn = connect(db_path)
         cursor = conn.cursor()
-        result = cursor.execute(query_string).fetchall()
+        result = cursor.execute(sql_query).fetchall()
         conn.close()
         return result
 

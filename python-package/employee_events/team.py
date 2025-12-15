@@ -6,7 +6,6 @@ from employee_events.query_base import QueryBase
 
 # Create a subclass of QueryBase
 # called  `Team`
-#### YOUR CODE HERE
 class Team(QueryBase):
     # Set the class attribute `name`
     # to the string "team"
@@ -17,18 +16,17 @@ class Team(QueryBase):
     # that receives no arguments
     # This method should return
     # a list of tuples from an sql execution
-    #### YOUR CODE HERE
-    def names():    # TODO: FOR LOOP HERE?
+    def names(self):   
         # Query 5
         # Write an SQL query that selects
         # the team_name and team_id columns
         # from the team table for all teams
         # in the database
-        #### YOUR CODE HERE
-        sql_query = f"""SELECT team_name, team_id " 
-                        FROM team"""
+        sql_query = f"""SELECT team_name, team_id  
+                        FROM {self.name}"""
         return self.query(sql_query)
     
+
 
     # Define a `username` method
     # that receives an ID argument

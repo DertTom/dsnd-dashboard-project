@@ -9,6 +9,7 @@ from employee_events.team import Team
 
 # import the load_model function from the utils.py file
 from utils import load_model
+import numpy as np
 
 
 """
@@ -78,18 +79,18 @@ class LineChart(MatplotlibViz):
         df = model.event_counts(entity_id)
         
         # Use the pandas .fillna method to fill nulls with 0
-        df.fillna(0)
+        df.fillna(0, inplace=True)
         
         # User the pandas .set_index method to set
         # the date column as the index
-        df.set_index('date', inplace=True)
+        df.set_index('event_date', inplace=True)
         
         # Sort the index
         df.sort_index(inplace=True)
         
         # Use the .cumsum method to change the data
         # in the dataframe to cumulative counts
-        df.cumsum()
+        df.loc[:,['sum_pos_evt', 'sum_neg_evt']] = df.loc[:,['sum_pos_evt', 'sum_neg_evt']].cumsum(axis=0)
         
         # Set the dataframe columns to the list
         # ['Positive', 'Negative']
@@ -98,11 +99,11 @@ class LineChart(MatplotlibViz):
         # Initialize a pandas subplot
         # and assign the figure and axis
         # to variables
-        fig, axs = plt.subplots(nrows=2, ncols=2)
+        fig, axs = plt.subplots(nrows=1, ncols=1)
         
         # call the .plot method for the
         # cumulative counts dataframe
-        df.plot(ax=axs[0])
+        df.plot(ax=axs)
         
         # pass the axis variable
         # to the `.set_axis_styling`
@@ -111,65 +112,62 @@ class LineChart(MatplotlibViz):
         # the border color and font color to black. 
         # Reference the base_components/matplotlib_viz file 
         # to inspect the supported keyword arguments
-        #### YOUR CODE HERE
+        self.set_axis_styling(axs, bordercolor='black', fontcolor='black')
         
         # Set title and labels for x and y axis
-        #### YOUR CODE HERE
+        axs.set_title('Cummulative event counts')
+        axs.set_xlabel('event_date')
+        axs.set_ylabel('Count Events')
 
 
 # # Create a subclass of base_components/MatplotlibViz
 # # called `BarChart`
-# #### YOUR CODE HERE
 class BarChart(MatplotlibViz): 
-#     # Create a `predictor` class attribute
-#     # assign the attribute to the output
-#     # of the `load_model` utils function
+    # Create a `predictor` class attribute
+    # assign the attribute to the output
+    # of the `load_model` utils function
     def __init__(self):
-        super().__init__()
         self.predictor = load_model()
+    # Overwrite the parent class `visualization` method
+    # Use the same parameters as the parent
+    def visualization(self, entity_id, model):
+        # Using the model and asset_id arguments
+        # pass the `asset_id` to the `.model_data` method
+        # to receive the data that can be passed to the machine
+        # learning model
+        df = model.model_data(entity_id)
+        
+        # Using the predictor class attribute
+        # pass the data to the `predict_proba` method
+        # Index the second column of predict_proba output
+        # The shape should be (<number of records>, 1)
+        prediction = self.predictor.predict_proba(df)[:,1]
 
-#     # Overwrite the parent class `visualization` method
-#     # Use the same parameters as the parent
-#     #### YOUR CODE HERE
+        # Below, create a `pred` variable set to
+        # the number we want to visualize
+        #
+        # If the model's name attribute is "team"
+        # We want to visualize the mean of the predict_proba output
+        # Otherwise set `pred` to the first value
+        # of the predict_proba output
+        if model.name == 'team':
+            pred = np.mean(prediction)
+        else:
+            pred = prediction[0]   
+        
+        # Initialize a matplotlib subplot
+        fig, ax = plt.subplots(nrows=1, ncols=1)
+        
+        # Run the following code unchanged
+        ax.barh([''], [pred])
+        ax.set_xlim(0, 1)
+        ax.set_title('Predicted Recruitment Risk', fontsize=20)
+        
+        # pass the axis variable
+        # to the `.set_axis_styling`
+        # method
+        self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
 
-#         # Using the model and asset_id arguments
-#         # pass the `asset_id` to the `.model_data` method
-#         # to receive the data that can be passed to the machine
-#         # learning model
-#         #### YOUR CODE HERE
-        
-#         # Using the predictor class attribute
-#         # pass the data to the `predict_proba` method
-#         #### YOUR CODE HERE
-        
-#         # Index the second column of predict_proba output
-#         # The shape should be (<number of records>, 1)
-#         #### YOUR CODE HERE
-        
-        
-#         # Below, create a `pred` variable set to
-#         # the number we want to visualize
-#         #
-#         # If the model's name attribute is "team"
-#         # We want to visualize the mean of the predict_proba output
-#         #### YOUR CODE HERE
-            
-#         # Otherwise set `pred` to the first value
-#         # of the predict_proba output
-#         #### YOUR CODE HERE
-        
-#         # Initialize a matplotlib subplot
-#         #### YOUR CODE HERE
-        
-#         # Run the following code unchanged
-#         ax.barh([''], [pred])
-#         ax.set_xlim(0, 1)
-#         ax.set_title('Predicted Recruitment Risk', fontsize=20)
-        
-#         # pass the axis variable
-#         # to the `.set_axis_styling`
-#         # method
-#         #### YOUR CODE HERE
 
  
 # # Create a subclass of combined_components/CombinedComponent
@@ -190,7 +188,6 @@ class Visualizations(CombinedComponent):
 class NotesTable(DataTable):
     # Overwrite the `component_data` method
     # using the same parameters as the parent class
-    #### YOUR CODE HERE
     def component_data(self, entity_id, model): 
         # Using the model and entity_id arguments
         # pass the entity_id to the model's .notes 
@@ -225,7 +222,7 @@ class Report(CombinedComponent):
     # of the header, dashboard filters,
     # data visualizations, and notes table
     def __init__(self):
-        self.children = [Header(), DashboardFilters(), LineChart(), Visualizations(), NotesTable()]
+        self.children = [Header(), DashboardFilters(), Visualizations(), NotesTable()]
 
 
 # Initialize a fasthtml app 
@@ -234,10 +231,12 @@ app = FastHTML()
 # # Initialize the `Report` class
 report = Report()
 
-# # Create a route for a get request
-# # Set the route's path to the root
-# #### YOUR CODE HERE
-@app.get('/.')
+
+
+
+# # # Create a route for a get request
+# # # Set the route's path to the root
+@app.get('/')
 def call_report():
     # Call the initialized report
     # pass the integer 1 and an instance
@@ -246,16 +245,15 @@ def call_report():
     return report(1, Employee())
 
 
-# # Create a route for a get request
-# # Set the route's path to receive a request
-# # for an employee ID so `/employee/2`
-# # will return the page for the employee with
-# # an ID of `2`. 
-# # parameterize the employee ID 
-# # to a string datatype
-# #### YOUR CODE HERE
+# Create a route for a get request
+# Set the route's path to receive a request
+# for an employee ID so `/employee/2`
+# will return the page for the employee with
+# an ID of `2`. 
+# parameterize the employee ID 
+# to a string datatype
 @app.get('/employee/{id}')
-def request_ID2(id):
+def request_ID2(id: str):
     # Call the initialized report
     # pass the ID and an instance
     # of the Employee SQL class as arguments
@@ -263,15 +261,15 @@ def request_ID2(id):
     return report(id, Employee())
 
 
-# # Create a route for a get request
-# # Set the route's path to receive a request
-# # for a team ID so `/team/2`
-# # will return the page for the team with
-# # an ID of `2`. 
-# # parameterize the team ID 
-# # to a string datatype
+# Create a route for a get request
+# Set the route's path to receive a request
+# for a team ID so `/team/2`
+# will return the page for the team with
+# an ID of `2`. 
+# parameterize the team ID 
+# to a string datatype
 @app.get('/team/{id}')
-def request_ID2(id):
+def request_ID2(id: str):
     # Call the initialized report
     # pass the id and an instance
     # of the Team SQL class as arguments
@@ -302,5 +300,5 @@ async def update_data(r):
     elif profile_type == 'Team':
         return RedirectResponse(f"/team/{id}", status_code=303)
     
-
 serve()
+
