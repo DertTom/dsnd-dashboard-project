@@ -53,11 +53,7 @@ class ReportDropdown(Dropdown):
 
 # # Create a subclass of base_components/BaseComponent
 # # called `Header`
-# #### YOUR CODE HERE
 class Header(BaseComponent):
-    def __init__(self): 
-    # Do nothing
-        self.grrr = ""
     # Overwrite the `build_component` method
     # Ensure the method has the same parameters
     # as the parent class
@@ -79,7 +75,6 @@ class LineChart(MatplotlibViz):
         # Pass the `asset_id` argument to
         # the model's `event_counts` method to
         # receive the x (Day) and y (event count)
-        #### YOUR CODE HERE
         df = model.event_counts(entity_id)
         
         # Use the pandas .fillna method to fill nulls with 0
@@ -94,9 +89,7 @@ class LineChart(MatplotlibViz):
         
         # Use the .cumsum method to change the data
         # in the dataframe to cumulative counts
-        #### YOUR CODE HERE
         df.cumsum()
-        
         
         # Set the dataframe columns to the list
         # ['Positive', 'Negative']
@@ -105,14 +98,11 @@ class LineChart(MatplotlibViz):
         # Initialize a pandas subplot
         # and assign the figure and axis
         # to variables
-        #### YOUR CODE HERE
-        fig, axes = plt.subplots(nrows=2, ncols=2)
-        df.plot(ax=axes[0])
-        plt.show()
+        fig, axs = plt.subplots(nrows=2, ncols=2)
         
         # call the .plot method for the
         # cumulative counts dataframe
-        #### YOUR CODE HERE
+        df.plot(ax=axs[0])
         
         # pass the axis variable
         # to the `.set_axis_styling`
@@ -130,14 +120,13 @@ class LineChart(MatplotlibViz):
 # # Create a subclass of base_components/MatplotlibViz
 # # called `BarChart`
 # #### YOUR CODE HERE
-class BarChart(MatplotlibViz): # ToDo: IMPLEMENT ME !!!
-    def __init__(self): 
-    # Do nothing
-        self.grrr = ""  
+class BarChart(MatplotlibViz): 
 #     # Create a `predictor` class attribute
 #     # assign the attribute to the output
 #     # of the `load_model` utils function
-#     #### YOUR CODE HERE
+    def __init__(self):
+        super().__init__()
+        self.predictor = load_model()
 
 #     # Overwrite the parent class `visualization` method
 #     # Use the same parameters as the parent
@@ -181,17 +170,16 @@ class BarChart(MatplotlibViz): # ToDo: IMPLEMENT ME !!!
 #         # to the `.set_axis_styling`
 #         # method
 #         #### YOUR CODE HERE
+
  
 # # Create a subclass of combined_components/CombinedComponent
 # # called Visualizations       
-# #### YOUR CODE HERE
-class Visualizations(CombinedComponent): # ToDo: IMPLEMENT ME !!!
+class Visualizations(CombinedComponent): 
     def __init__(self):
     # Set the `children`
     # class attribute to a list
     # containing an initialized
     # instance of `LineChart` and `BarChart`
-    #### YOUR CODE HERE
         self.children = [LineChart(), BarChart()]
     # Leave this line unchanged
     outer_div_type = Div(cls='grid')
@@ -237,16 +225,14 @@ class Report(CombinedComponent):
     # of the header, dashboard filters,
     # data visualizations, and notes table
     def __init__(self):
-        self.children = [Header(), DashboardFilters(), LineChart(), LineChart(), NotesTable()]
+        self.children = [Header(), DashboardFilters(), LineChart(), Visualizations(), NotesTable()]
 
 
 # Initialize a fasthtml app 
 app = FastHTML()
 
-
 # # Initialize the `Report` class
 report = Report()
-
 
 # # Create a route for a get request
 # # Set the route's path to the root
@@ -268,14 +254,13 @@ def call_report():
 # # parameterize the employee ID 
 # # to a string datatype
 # #### YOUR CODE HERE
-# @app.get('/employee/2')
-# def request_ID2(id):
-#     return report(id, Employee())
-#     # Call the initialized report
-#     # pass the ID and an instance
-#     # of the Employee SQL class as arguments
-#     # Return the result
-#     #### YOUR CODE HERE
+@app.get('/employee/{id}')
+def request_ID2(id):
+    # Call the initialized report
+    # pass the ID and an instance
+    # of the Employee SQL class as arguments
+    # Return the result
+    return report(id, Employee())
 
 
 # # Create a route for a get request
@@ -285,15 +270,14 @@ def call_report():
 # # an ID of `2`. 
 # # parameterize the team ID 
 # # to a string datatype
-# #### YOUR CODE HERE
-# @app.get('/team/2')
-# def request_ID2(id):
-#     return report(id, 'Team'())
-#     # Call the initialized report
-#     # pass the id and an instance
-#     # of the Team SQL class as arguments
-#     # Return the result
-#     #### YOUR CODE HERE
+@app.get('/team/{id}')
+def request_ID2(id):
+    # Call the initialized report
+    # pass the id and an instance
+    # of the Team SQL class as arguments
+    # Return the result
+    return report(id, Team())
+
 
 
 # Keep the below code unchanged!

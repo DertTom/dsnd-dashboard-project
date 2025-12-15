@@ -6,8 +6,8 @@ import pandas as pd
 # Using pathlib, create a `db_path` variable
 # that points to the absolute path for the `employee_events.db` file
 #### YOUR CODE HERE
-project_root = Path(__file__).parent
-db_path = project_root/Path('employee_events/employee_events.db')
+project_root = Path(__file__).parent.parent
+db_path = project_root/'employee_events'/'employee_events.db'
 
 # OPTION 1: MIXIN
 # Define a class called `QueryMixin`
