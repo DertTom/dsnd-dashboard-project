@@ -2,8 +2,6 @@ from .base_component import BaseComponent
 from fasthtml.common import Select, Label, Div, Option
 
 class Dropdown(BaseComponent):
-
-
     def __init__(self, id="selector", name="entity-selection", label=""):
         self.id = id
         self.name = name
@@ -31,7 +29,6 @@ class Dropdown(BaseComponent):
         return selector
     
     def outer_div(self, child):
-
         return Div(
             Label(self.label, _for=self.id),
             child,

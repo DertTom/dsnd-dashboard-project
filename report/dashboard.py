@@ -3,12 +3,11 @@ import matplotlib.pyplot as plt
 
 # Import QueryBase, Employee, Team from employee_events
 #### YOUR CODE HERE
-# from employee_events.query_base import QueryBase
+from employee_events.query_base import QueryBase
 from employee_events.employee import Employee
-# from employee_events.team import Team
+from employee_events.team import Team
 
 # import the load_model function from the utils.py file
-#### YOUR CODE HERE
 from utils import load_model
 
 
@@ -29,106 +28,103 @@ from combined_components import FormGroup, CombinedComponent
 
 # Create a subclass of base_components/dropdown
 # called `ReportDropdown`
-#### YOUR CODE HERE
-class ReportDropdown(Dropdown): # ToDo: IMPLEMENT ME !!!
+class ReportDropdown(Dropdown): 
     # Overwrite the build_component method
     # ensuring it has the same parameters
     # as the Report parent class's method
-    #### YOUR CODE HERE
     def build_component(self, entity_id, model):
         #  Set the `label` attribute so it is set
         #  to the `name` attribute for the model
-        #### YOUR CODE HERE
-        self.label = "name"
+        self.label = model.name
         # Return the output from the
         # parent class's build_component method
-        #### YOUR CODE HERE
-        return super().build_component(self, entity_id, model)
+        return super().build_component(entity_id, model)
     
     # Overwrite the `component_data` method
     # Ensure the method uses the same parameters
     # as the parent class method
-    #### YOUR CODE HERE
+    def component_data(self, entity_id, model):
         # Using the model argument
         # call the employee_events method
         # that returns the user-type's
         # names and ids
+        return model.names()
 
 
 # # Create a subclass of base_components/BaseComponent
 # # called `Header`
 # #### YOUR CODE HERE
-class Header(BaseComponent): # ToDo: IMPLEMENT ME !!!
+class Header(BaseComponent):
     def __init__(self): 
     # Do nothing
         self.grrr = ""
-#     # Overwrite the `build_component` method
-#     # Ensure the method has the same parameters
-#     # as the parent class
-#     #### YOUR CODE HERE
-        
-#         # Using the model argument for this method
-#         # return a fasthtml H1 objects
-#         # containing the model's name attribute
-#         #### YOUR CODE HERE
+    # Overwrite the `build_component` method
+    # Ensure the method has the same parameters
+    # as the parent class
+    def build_component(self, entity_id, model):
+        # Using the model argument for this method
+        # return a fasthtml H1 objects
+        # containing the model's name attribute
+        return H1(model.name)
+
           
 
 # # Create a subclass of base_components/MatplotlibViz
 # # called `LineChart`
 # #### YOUR CODE HERE
-class LineChart(MatplotlibViz): # ToDo: IMPLEMENT ME !!!
-    def __init__(self): 
-    # Do nothing
-        self.grrr = ""    
-#     # Overwrite the parent class's `visualization`
-#     # method. Use the same parameters as the parent
-#     #### YOUR CODE HERE
-    
-
-#         # Pass the `asset_id` argument to
-#         # the model's `event_counts` method to
-#         # receive the x (Day) and y (event count)
-#         #### YOUR CODE HERE
+class LineChart(MatplotlibViz):
+    # Overwrite the parent class's `visualization`
+    # method. Use the same parameters as the parent
+    def visualization(self, entity_id, model):
+        # Pass the `asset_id` argument to
+        # the model's `event_counts` method to
+        # receive the x (Day) and y (event count)
+        #### YOUR CODE HERE
+        df = model.event_counts(entity_id)
         
-#         # Use the pandas .fillna method to fill nulls with 0
-#         #### YOUR CODE HERE
+        # Use the pandas .fillna method to fill nulls with 0
+        df.fillna(0)
         
-#         # User the pandas .set_index method to set
-#         # the date column as the index
-#         #### YOUR CODE HERE
+        # User the pandas .set_index method to set
+        # the date column as the index
+        df.set_index('date', inplace=True)
         
-#         # Sort the index
-#         #### YOUR CODE HERE
+        # Sort the index
+        df.sort_index(inplace=True)
         
-#         # Use the .cumsum method to change the data
-#         # in the dataframe to cumulative counts
-#         #### YOUR CODE HERE
+        # Use the .cumsum method to change the data
+        # in the dataframe to cumulative counts
+        #### YOUR CODE HERE
+        df.cumsum()
         
         
-#         # Set the dataframe columns to the list
-#         # ['Positive', 'Negative']
-#         #### YOUR CODE HERE
+        # Set the dataframe columns to the list
+        # ['Positive', 'Negative']
+        df.rename(columns={'sum_pos_evt': 'Positive', 'sum_neg_evt': 'Negative'}, inplace=True)
         
-#         # Initialize a pandas subplot
-#         # and assign the figure and axis
-#         # to variables
-#         #### YOUR CODE HERE
+        # Initialize a pandas subplot
+        # and assign the figure and axis
+        # to variables
+        #### YOUR CODE HERE
+        fig, axes = plt.subplots(nrows=2, ncols=2)
+        df.plot(ax=axes[0])
+        plt.show()
         
-#         # call the .plot method for the
-#         # cumulative counts dataframe
-#         #### YOUR CODE HERE
+        # call the .plot method for the
+        # cumulative counts dataframe
+        #### YOUR CODE HERE
         
-#         # pass the axis variable
-#         # to the `.set_axis_styling`
-#         # method
-#         # Use keyword arguments to set 
-#         # the border color and font color to black. 
-#         # Reference the base_components/matplotlib_viz file 
-#         # to inspect the supported keyword arguments
-#         #### YOUR CODE HERE
+        # pass the axis variable
+        # to the `.set_axis_styling`
+        # method
+        # Use keyword arguments to set 
+        # the border color and font color to black. 
+        # Reference the base_components/matplotlib_viz file 
+        # to inspect the supported keyword arguments
+        #### YOUR CODE HERE
         
-#         # Set title and labels for x and y axis
-#         #### YOUR CODE HERE
+        # Set title and labels for x and y axis
+        #### YOUR CODE HERE
 
 
 # # Create a subclass of base_components/MatplotlibViz
@@ -190,33 +186,28 @@ class BarChart(MatplotlibViz): # ToDo: IMPLEMENT ME !!!
 # # called Visualizations       
 # #### YOUR CODE HERE
 class Visualizations(CombinedComponent): # ToDo: IMPLEMENT ME !!!
-    def __init__(self): 
-    # Do nothing
-        self.grrr = ""  
-#     # Set the `children`
-#     # class attribute to a list
-#     # containing an initialized
-#     # instance of `LineChart` and `BarChart`
-#     #### YOUR CODE HERE
+    def __init__(self):
+    # Set the `children`
+    # class attribute to a list
+    # containing an initialized
+    # instance of `LineChart` and `BarChart`
+    #### YOUR CODE HERE
+        self.children = [LineChart(), BarChart()]
+    # Leave this line unchanged
+    outer_div_type = Div(cls='grid')
 
-#     # Leave this line unchanged
-#     outer_div_type = Div(cls='grid')
-            
-# # Create a subclass of base_components/DataTable
-# # called `NotesTable`
-# #### YOUR CODE HERE
-class NotesTable(DataTable): # ToDo: IMPLEMENT ME !!!
-    def __init__(self): 
-    # Do nothing
-        self.grrr = ""  
-#     # Overwrite the `component_data` method
-#     # using the same parameters as the parent class
-#     #### YOUR CODE HERE
-        
-#         # Using the model and entity_id arguments
-#         # pass the entity_id to the model's .notes 
-#         # method. Return the output
-#         #### YOUR CODE HERE
+
+# Create a subclass of base_components/DataTable
+# called `NotesTable`
+class NotesTable(DataTable):
+    # Overwrite the `component_data` method
+    # using the same parameters as the parent class
+    #### YOUR CODE HERE
+    def component_data(self, entity_id, model): 
+        # Using the model and entity_id arguments
+        # pass the entity_id to the model's .notes 
+        # method. Return the output
+        return model.notes(entity_id)  
     
 
 class DashboardFilters(FormGroup):
@@ -239,34 +230,35 @@ class DashboardFilters(FormGroup):
     
 # # Create a subclass of CombinedComponent
 # # called `Report`
-# #### YOUR CODE HERE
-class Report(CombinedComponent): # ToDo: IMPLEMENT ME !!!
-    def __init__(self): 
-    # Do nothing
-        self.grrr = ""  
-#     # Set the `children`
-#     # class attribute to a list
-#     # containing initialized instances 
-#     # of the header, dashboard filters,
-#     # data visualizations, and notes table
-#     #### YOUR CODE HERE
+class Report(CombinedComponent):
+    # Set the `children`
+    # class attribute to a list
+    # containing initialized instances 
+    # of the header, dashboard filters,
+    # data visualizations, and notes table
+    def __init__(self):
+        self.children = [Header(), DashboardFilters(), LineChart(), LineChart(), NotesTable()]
 
-# # Initialize a fasthtml app 
-# #### YOUR CODE HERE
+
+# Initialize a fasthtml app 
+app = FastHTML()
+
 
 # # Initialize the `Report` class
-# #### YOUR CODE HERE
+report = Report()
 
 
 # # Create a route for a get request
 # # Set the route's path to the root
 # #### YOUR CODE HERE
+@app.get('/.')
+def call_report():
+    # Call the initialized report
+    # pass the integer 1 and an instance
+    # of the Employee class as arguments
+    # Return the result
+    return report(1, Employee())
 
-#     # Call the initialized report
-#     # pass the integer 1 and an instance
-#     # of the Employee class as arguments
-#     # Return the result
-#     #### YOUR CODE HERE
 
 # # Create a route for a get request
 # # Set the route's path to receive a request
@@ -276,12 +268,15 @@ class Report(CombinedComponent): # ToDo: IMPLEMENT ME !!!
 # # parameterize the employee ID 
 # # to a string datatype
 # #### YOUR CODE HERE
-
+# @app.get('/employee/2')
+# def request_ID2(id):
+#     return report(id, Employee())
 #     # Call the initialized report
 #     # pass the ID and an instance
 #     # of the Employee SQL class as arguments
 #     # Return the result
 #     #### YOUR CODE HERE
+
 
 # # Create a route for a get request
 # # Set the route's path to receive a request
@@ -291,7 +286,9 @@ class Report(CombinedComponent): # ToDo: IMPLEMENT ME !!!
 # # parameterize the team ID 
 # # to a string datatype
 # #### YOUR CODE HERE
-
+# @app.get('/team/2')
+# def request_ID2(id):
+#     return report(id, 'Team'())
 #     # Call the initialized report
 #     # pass the id and an instance
 #     # of the Team SQL class as arguments
@@ -299,28 +296,27 @@ class Report(CombinedComponent): # ToDo: IMPLEMENT ME !!!
 #     #### YOUR CODE HERE
 
 
-# # Keep the below code unchanged!
-# @app.get('/update_dropdown{r}')
-# def update_dropdown(r):
-#     dropdown = DashboardFilters.children[1]
-#     print('PARAM', r.query_params['profile_type'])
-#     if r.query_params['profile_type'] == 'Team':
-#         return dropdown(None, Team())
-#     elif r.query_params['profile_type'] == 'Employee':
-#         return dropdown(None, Employee())
+# Keep the below code unchanged!
+@app.get('/update_dropdown{r}')
+def update_dropdown(r):
+    dropdown = DashboardFilters.children[1]
+    print('PARAM', r.query_params['profile_type'])
+    if r.query_params['profile_type'] == 'Team':
+        return dropdown(None, Team())
+    elif r.query_params['profile_type'] == 'Employee':
+        return dropdown(None, Employee())
 
 
-# @app.post('/update_data')
-# async def update_data(r):
-#     from fasthtml.common import RedirectResponse
-#     data = await r.form()
-#     profile_type = data._dict['profile_type']
-#     id = data._dict['user-selection']
-#     if profile_type == 'Employee':
-#         return RedirectResponse(f"/employee/{id}", status_code=303)
-#     elif profile_type == 'Team':
-#         return RedirectResponse(f"/team/{id}", status_code=303)
+@app.post('/update_data')
+async def update_data(r):
+    from fasthtml.common import RedirectResponse
+    data = await r.form()
+    profile_type = data._dict['profile_type']
+    id = data._dict['user-selection']
+    if profile_type == 'Employee':
+        return RedirectResponse(f"/employee/{id}", status_code=303)
+    elif profile_type == 'Team':
+        return RedirectResponse(f"/team/{id}", status_code=303)
     
 
-
-# serve()
+serve()

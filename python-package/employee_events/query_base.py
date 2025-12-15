@@ -1,23 +1,20 @@
 # Import any dependencies needed to execute sql queries
 # YOUR CODE HERE
 import pandas as pd
+from .sql_execution import QueryMixin
 
 # Define a class called QueryBase
 # Use inheritance to add methods
 # for querying the employee_events database.
 # YOUR CODE HERE
-class QueryBase():
+class QueryBase(QueryMixin):
     def __init__(self):
         self.name = ""
-
     # Define a `names` method that receives
     # no passed arguments
-    # YOUR CODE HERE
-    def names(self): # ToDo: IMPLEMENT ME !!!
+    def names(self): 
         # Return an empty list
-        # YOUR CODE HERE
         return []
-
     # Define an `event_counts` method
     # that receives an `id` argument
     # This method should return a pandas dataframe
@@ -31,14 +28,21 @@ class QueryBase():
         # Use f-string formatting to set the name
         # of id columns used for joining
         # order by the event_date column
-        # YOUR CODE HERE
-        return pd.DataFrame()   # ToDo: IMPLEMENT ME !!! 
+        sql_query = f"""SELECT 
+                        SUM(positive_events) AS 'sum_pos_evt'
+                        SUM(negative_events) AS 'sum_neg_evt'
+                        FROM {self.name}
+                        WHERE {self.name}'_id' = {id}
+                        GROUP BY event_date
+                        ORDER BY event_date
+                        """
+        return self.pandas_query(sql_query)
     
 
     # Define a `notes` method that receives an id argument
     # This function should return a pandas dataframe
     # YOUR CODE HERE
-    def notes(self, id)->pd.DataFrame:
+    def notes(self, id)->pd.DataFrame:  # ToDo: IMPLEMENT ME !!! 
         # QUERY 2
         # Write an SQL query that returns `note_date`, and `note`
         # from the `notes` table
@@ -47,5 +51,11 @@ class QueryBase():
         # so the query returns the notes
         # for the table name in the `name` class attribute
         # YOUR CODE HERE
+        sql_query = f"""SELECT note_date, note
+                        FROM 'notes'
+                        WHERE {self.name}'_id' = {id}
+                        GROUP BY event_date
+                        ORDER BY event_date
+                        """
         return pd.DataFrame()   # ToDo: IMPLEMENT ME !!! 
 
